@@ -27,7 +27,6 @@ def handle_client(client, address):
             recipient = recipient.strip()
             print(f"Recipient {recipient}")
             if recipient in clients:
-                print(f"Recipient {recipient} Client {clients}")
                 clients[recipient].send(f"{name}: {message_body}".encode())
             else:
                 client.send("Error: Recipient not found.".encode())
@@ -47,9 +46,12 @@ print(f"Server listening on {host}:{port}")
 
 clients = {}
 
-while True:
-    client, address = server.accept()
+try:
+    while True:
+        client, address = server.accept()
 
-    # Start a thread for each client
-    thread = threading.Thread(target=handle_client, args=(client, address))
-    thread.start()
+        # Start a thread for each client
+        thread = threading.Thread(target=handle_client, args=(client, address))
+        thread.start()
+except KeyboardInterrupt:
+    exit(0)
