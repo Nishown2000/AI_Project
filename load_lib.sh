@@ -4,10 +4,10 @@ git-lfs install
 echo "lfs is intalled"
 
 if [ -d "Laama_Lib" ]; then
-    echo "Library already exists. If not delete Laama_Lib folder"
+    echo "Library already exists. If not delete Gemma_Lib folder"
 else
-    git-lfs clone https://Nishown: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@huggingface.co/meta-llama/Llama-2-7b-chat-hf Laama_Lib
-    echo "Laama_Lib Library is Downloaded"
+    git-lfs clone https://Nishown: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@huggingface.co/google/gemma-1.1-2b-it Gemma_Lib
+    echo "Gemma_Lib Library is Downloaded"
 fi
 
 pip install torch torchvision torchaudio
