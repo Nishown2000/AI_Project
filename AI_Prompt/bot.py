@@ -1,31 +1,45 @@
-from transformers import AutoTokenizer, AutoModelForCausalLM
-import torch
-import os
+import json
+import requests
 
-model_id = "gg-hf/gemma-2b-it"
-dtype = torch.bfloat16
-access_token = 
+# NOTE: ollama must be running for this to work, start the ollama app or run `ollama serve`
+model = "phi3"  # TODO: update this for whatever model you wish to use
 
-pwd = os.getcwd()
-model_path = os.path.join(pwd, "Gemma_Lib")
+def chat(messages):
+    r = requests.post(
+        "http://0.0.0.0:11434/api/chat",
+        json={"model": model, "messages": messages, "stream": True},
+    )
+    r.raise_for_status()
+    output = ""
 
-tokenizer = AutoTokenizer.from_pretrained(model_path, token=access_token)
-model = AutoModelForCausalLM.from_pretrained(
-    model_path,
-    token=access_token,
-    torch_dtype=dtype,
-)
+    for line in r.iter_lines():
+        body = json.loads(line)
+        if "error" in body:
+            raise Exception(body["error"])
+        if body.get("done") is False:
+            message = body.get("message", "")
+            content = message.get("content", "")
+            output += content
+            # the response streams one token at a time, print that as we receive it
+            print(content, end="", flush=True)
 
-chat = [
-    {"role": "user", "content": "where is india"},
-]
-prompt = tokenizer.apply_chat_template(chat, tokenize=False, add_generation_prompt=True)
+        if body.get("done", False):
+            message["content"] = output
+            return message
 
-input_ids = tokenizer(prompt, add_special_tokens=False, return_tensors="pt")
-outputs = model.generate(**input_ids, max_new_tokens=50)
-decoded_output = tokenizer.decode(outputs[0], skip_special_tokens=True)
+def main():
+    messages = []
 
-# Extract only the model's answer
-model_answer = decoded_output.split('\n')[-1].strip()
+    while True:
+        user_input = input("Enter a prompt: ")
+        if not user_input:
+            exit()
+        print()
+        messages.append({"role": "user", "content": user_input})
+        message = chat(messages)
+        messages.append(message)
+        print("\n\n")
 
-print(model_answer)
+
+if __name__ == "__main__":
+    main()
