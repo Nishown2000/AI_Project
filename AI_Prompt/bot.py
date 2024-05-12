@@ -4,7 +4,7 @@ import os
 
 model_id = "gg-hf/gemma-2b-it"
 dtype = torch.bfloat16
-access_token = "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"
+access_token = 
 
 pwd = os.getcwd()
 model_path = os.path.join(pwd, "Gemma_Lib")
