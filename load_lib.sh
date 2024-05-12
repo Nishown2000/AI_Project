@@ -6,7 +6,7 @@ echo "lfs is intalled"
 if [ -d "Gemma_Lib" ]; then
     echo "Library already exists. If not delete Gemma_Lib folder"
 else
-    git-lfs clone https://Nishown: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@huggingface.co/google/gemma-1.1-2b-it Gemma_Lib
+    git-lfs clone https://huggingface.co/google/gemma-1.1-2b-it Gemma_Lib
     echo "Gemma_Lib Library is Downloaded"
 fi
 
